@@ -30,20 +30,19 @@ class PersonEditViewModel @Inject constructor(
     private val _state = MutableStateFlow(PersonEditUiState())
     val state = _state.asStateFlow()
 
-    fun load(id: Int) {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+    fun load(id: Int?) {
 
-            val person = getPersonByIdUseCase(id)
-
-            _state.update {
-                it.copy(
-                    id = person?.id,
-                    firstName = person?.firstName ?: "",
-                    lastName = person?.lastName ?: "",
-                    notes = person?.notes ?: "",
-                    isLoading = false
-                )
+        id.let {
+            viewModelScope.launch {
+                getPersonByIdUseCase(it)?.let { person ->
+                    _state.update { state ->
+                        state.copy(
+                            firstName = person.firstName,
+                            lastName = person.lastName,
+                            notes = person.notes
+                        )
+                    }
+                }
             }
         }
     }
@@ -58,6 +57,10 @@ class PersonEditViewModel @Inject constructor(
 
     fun setNotes(value: String) {
         _state.update { it.copy(notes = value) }
+    }
+
+    fun reset() {
+        _state.value = PersonEditUiState()
     }
 
     fun save() {

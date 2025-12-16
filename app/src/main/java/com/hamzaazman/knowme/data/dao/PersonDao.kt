@@ -15,7 +15,7 @@ interface PersonDao {
     fun getPersons(): Flow<List<PersonEntity>>
 
     @Query("SELECT * FROM persons WHERE id = :id LIMIT 1")
-    suspend fun getPersonById(id: Int): PersonEntity?
+    suspend fun getPersonById(id: Int?): PersonEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPerson(person: PersonEntity)

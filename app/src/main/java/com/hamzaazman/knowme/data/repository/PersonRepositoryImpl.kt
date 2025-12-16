@@ -17,7 +17,7 @@ class PersonRepositoryImpl @Inject constructor(
             list.map { it.toDomain() }
         }
 
-    override suspend fun getPersonById(id: Int): Person? =
+    override suspend fun getPersonById(id: Int?): Person? =
         dao.getPersonById(id)?.toDomain()
 
     override suspend fun insertPerson(person: Person) =
