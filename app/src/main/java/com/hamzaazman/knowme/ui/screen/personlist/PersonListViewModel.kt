@@ -13,7 +13,8 @@ import javax.inject.Inject
 
 
 data class PersonListUiState(
-    val persons: List<Person> = emptyList()
+    val persons: List<Person> = emptyList(),
+    val groupedPersons: Map<Char, List<Person>> = emptyMap()
 )
 
 @HiltViewModel
@@ -31,8 +32,15 @@ class PersonListViewModel @Inject constructor(
     private fun loadPersons() {
         viewModelScope.launch {
             getPersonsUseCase().collect { list ->
+                val grouped = list
+                    .sortedBy { it.firstName }
+                    .groupBy { it.firstName.first().uppercaseChar() }
+
                 _state.update {
-                    it.copy(persons = list)
+                    it.copy(
+                        persons = list,
+                        groupedPersons = grouped
+                    )
                 }
             }
         }
